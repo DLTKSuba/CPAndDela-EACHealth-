@@ -25,6 +25,36 @@ html.theme-maconomy .left-sidebar__variant--maconomy {
   display: contents;
 }
 
+/* Hairline rule between item groups that share one section card */
+.left-sidebar__divider {
+  display: block;
+  height: var(--border-width-thin);
+  margin: var(--space-1) var(--space-1-5);
+  background-color: var(--border-color);
+}
+
+/* Count badge pinned to the icon's top-right corner */
+.left-sidebar__icon {
+  position: relative;
+}
+
+.left-sidebar__badge {
+  position: absolute;
+  top: calc(-1 * var(--space-1));
+  right: calc(-1 * var(--space-1));
+  min-width: var(--space-4);
+  height: var(--space-4);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-full);
+  background-color: var(--text-primary);
+  color: var(--text-inverse);
+  font-family: var(--font-sans);
+  font-size: var(--text-2xs, 0.625rem);
+  font-weight: var(--font-semibold);
+  line-height: var(--space-4);
+  text-align: center;
+}
+
 /* Dark mode: img-based custom icons (e.g. Report, Resource) appear white */
 html.dark .left-sidebar__icon .left-sidebar__custom-icon {
   filter: brightness(0) invert(1);

@@ -77,6 +77,13 @@ const FALLBACK_SVG: Record<string, string> = {
   'squares-plus': '<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 0 0 2.25-2.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v2.25A2.25 2.25 0 0 0 6 10.5Zm0 9.75h2.25A2.25 2.25 0 0 0 10.5 18v-2.25a2.25 2.25 0 0 0-2.25-2.25H6a2.25 2.25 0 0 0-2.25 2.25V18A2.25 2.25 0 0 0 6 20.25Zm9.75-9.75H18a2.25 2.25 0 0 0 2.25-2.25V6a2.25 2.25 0 0 0-2.25-2.25h-2.25A2.25 2.25 0 0 0 13.5 6v2.25a2.25 2.25 0 0 0 2.25 2.25Z"/>',
   star: '<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"/>',
   'view-columns': '<path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z"/>',
+  // CP left rail icons (icons/tabler/outline/chart-arrows.svg, writing-sign.svg, building.svg)
+  'chart-arrows':
+    '<path stroke-linecap="round" stroke-linejoin="round" d="M3 18h14M9 9l3 3l-3 3M14 15l3 3l-3 3M3 3v18M3 12h9M18 3l3 3l-3 3M3 6h18"/>',
+  'writing-sign':
+    '<path stroke-linecap="round" stroke-linejoin="round" d="M3 19c3.333 -2 5 -4 5 -6c0 -3 -1 -3 -2 -3s-2.032 1.085 -2 3c.034 2.048 1.658 2.877 2.5 4c1.5 2 2.5 2.5 3.5 1c.667 -1 1.167 -1.833 1.5 -2.5c1 2.333 2.333 3.5 4 3.5h2.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M20 17v-12c0 -1.121 -.879 -2 -2 -2s-2 .879 -2 2v12l2 2l2 -2"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 7h4"/>',
+  building:
+    '<path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16"/>',
   // Dela chat composer icons (icons/tabler/outline/paperclip.svg, icons/hero/outline/*.svg)
   paperclip: '<path stroke-linecap="round" stroke-linejoin="round" d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5-6.5a3 3 0 0 0-6-6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5-6.5"/>',
   microphone: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75c3.3137 0 6-2.6863 6-6v-1.5M12 18.75c-3.31371 0-6-2.6863-6-6v-1.5M12 18.75V22.5M8.25 22.5h7.5M12 15.75c-1.6569 0-3-1.3431-3-3V4.5c0-1.65685 1.3431-3 3-3s3 1.34315 3 3v8.25c0 1.6569-1.3431 3-3 3Z"/>',

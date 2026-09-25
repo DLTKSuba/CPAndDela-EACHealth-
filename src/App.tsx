@@ -4,8 +4,8 @@ import clsx from 'clsx'
 import { Routes, Route } from 'react-router-dom'
 import { ShellLayout } from './components/harmony/ShellLayout'
 import type { ShellLayoutProps } from './components/harmony/ShellLayout'
+import type { LeftSidebarSection } from './components/harmony/LeftSidebar'
 import type { RightSidebarSection } from './components/harmony/RightSidebar'
-import { Card } from './components/harmony/Card'
 import { Button } from './components/harmony/Button'
 import { TabStrip } from './components/harmony/TabStrip'
 import { Table, type SortColumn } from './components/harmony/Table'
@@ -14,25 +14,22 @@ import { LifecycleBarChart } from './components/harmony/LifecycleBarChart'
 import type { LifecycleBarChartBar } from './components/harmony/LifecycleBarChart'
 import { Link } from './components/harmony/Link'
 import { Icon } from './components/harmony/Icon'
-import { DelaPanelContent } from './components/harmony/DelaPanelContent'
 import { DelaPanelContentV2 } from './components/harmony/DelaPanelContentV2'
+import { DelaProjectBudgetContent } from './components/harmony/DelaProjectBudgetContent'
 import { ComponentGalleryPage } from './pages/ComponentGalleryPage'
 import { ComponentDemoPage } from './pages/ComponentDemoPage'
 import { RightSidebarPanelDemosPage } from './pages/RightSidebarPanelDemosPage'
+import { ProjectBudgetsEacContent } from './ProjectBudgetsEacContent'
 
 /** Default product theme for the designer preview (change via document.documentElement.classList if needed). */
 const DEFAULT_THEME = 'theme-cp'
 
 const PROTOTYPE_VERSION_OPTIONS: Option[] = [
-  { value: 'v1', label: 'V1' },
-  { value: 'v2', label: 'Version 2' },
+  { value: 'e-e', label: 'E-E' },
 ]
 
-const USE_CASE_SCENARIO_OPTIONS: Option[] = [
-  { value: 'end-to-end', label: 'End-End experience' },
-  { value: 'dela-not-enabled', label: 'Close thr Dela is not Enabled' },
-  { value: 'missing-default-job', label: 'Missing default job' },
-]
+/** Scenario behind the Dela panel demo. The picker was removed, so it stays end-to-end. */
+const USE_CASE_SCENARIO: string = 'end-to-end'
 
 /**
  * Per-theme ShellLayout prop defaults.
@@ -41,7 +38,7 @@ const USE_CASE_SCENARIO_OPTIONS: Option[] = [
  */
 const THEME_SHELL_PROPS: Record<string, Partial<ShellLayoutProps>> = {
   'theme-cp': {
-    productName: 'Agentic Close',
+    productName: 'Costpoint',
     logoSrc: '/logos/CPVPLogo.svg',
     showFooter: false,
     showFloatingNav: true,
@@ -70,6 +67,32 @@ const THEME_SHELL_PROPS: Record<string, Partial<ShellLayoutProps>> = {
     rightSidebarVariant: 'maconomy',
   },
 }
+
+/** Command Center left rail: shell shortcuts on top, then search + application nav. */
+const COMMAND_CENTER_LEFT_RAIL: LeftSidebarSection[] = [
+  {
+    items: [
+      { icon: 'home', label: 'Home' },
+      { icon: 'squares-plus', label: 'Applications' },
+      { icon: 'star', label: 'Favorites' },
+      { icon: 'clock', label: 'Recents', badge: 2 },
+    ],
+  },
+  {
+    items: [
+      { icon: 'magnifying-glass', label: 'Search', dividerAfter: true },
+      { icon: 'calculator', label: 'Accounting' },
+      { icon: 'chart-arrows', label: 'Command Center', active: true },
+      { icon: 'writing-sign', label: 'Timesheets' },
+      { icon: 'building', label: 'Organization' },
+      { icon: 'cube', label: 'Materials' },
+      { icon: 'users', label: 'People' },
+      { icon: 'clock', label: 'Time and Expense' },
+      { icon: 'document-chart-bar', label: 'Reports' },
+      { icon: 'cog-6-tooth', label: 'Settings' },
+    ],
+  },
+]
 
 /** Command Center right rail: Dela + alerts, output, then input/assistance. */
 const COMMAND_CENTER_RIGHT_RAIL: RightSidebarSection[] = [
@@ -1656,10 +1679,9 @@ export function RequisitionDetailsTabView({ prId }: { prId: string }) {
 }
 
 function HomeShell() {
-  const [prototypeVersion, setPrototypeVersion] = useState('v1')
-  const [useCaseScenario, setUseCaseScenario] = useState('end-to-end')
-  const closeThroughDelaEnabled = useCaseScenario !== 'dela-not-enabled'
-  const missingDefaultJob = useCaseScenario === 'missing-default-job'
+  const [prototypeVersion, setPrototypeVersion] = useState('e-e')
+  const closeThroughDelaEnabled = USE_CASE_SCENARIO !== 'dela-not-enabled'
+  const missingDefaultJob = USE_CASE_SCENARIO === 'missing-default-job'
   const [activeTabId, setActiveTabId] = useState<string>('closing-manager')
   const [refreshTick, setRefreshTick] = useState(0)
   const [roleFilter, setRoleFilter] = useState('accountant')
@@ -1752,20 +1774,7 @@ function HomeShell() {
     <ShellLayout
       {...themeProps}
       className="command-center-shell"
-      pageHeaderTitle="Command Center"
-      pageHeaderShowDefaultButtons={false}
-      pageHeaderActions={
-        <Dropdown
-          id="cc-use-case-scenario"
-          name="useCaseScenario"
-          className="command-center-use-case"
-          triggerClassName="btn btn--outline btn--md"
-          triggerIconSize="sm"
-          options={USE_CASE_SCENARIO_OPTIONS}
-          value={useCaseScenario}
-          onChange={setUseCaseScenario}
-        />
-      }
+      pageHeaderTitle=""
       companyName="Company name (system/environment name)"
       brandAccessory={
         <Dropdown
@@ -1779,29 +1788,27 @@ function HomeShell() {
         />
       }
       floatingNavActions={floatingNavActions}
+      leftSidebarSections={COMMAND_CENTER_LEFT_RAIL}
       rightSidebarSections={COMMAND_CENTER_RIGHT_RAIL}
       rightSidebarAlign="content"
-      rightSidebarTopAnchor='[aria-label="Refresh"]'
+      rightSidebarTopAnchor=".project-budget-panel__titlebar"
       rightShellPanelVariant="dela"
-      rightShellPanelBottomAlign="content"
+      rightShellPanelBottomAlign="left-rail"
       rightShellPanelDelaSlot={
         prototypeVersion === 'v2' ? (
           <DelaPanelContentV2
-            key={`v2-${useCaseScenario}`}
+            key={`v2-${USE_CASE_SCENARIO}`}
             closeThroughDelaEnabled={closeThroughDelaEnabled}
             missingDefaultJob={missingDefaultJob}
           />
         ) : (
-          <DelaPanelContent
-            key={`v1-${useCaseScenario}`}
-            closeThroughDelaEnabled={closeThroughDelaEnabled}
-            missingDefaultJob={missingDefaultJob}
-          />
+          <DelaProjectBudgetContent key={`budget-${USE_CASE_SCENARIO}`} />
         )
       }
     >
-      <Card primary elevated className="command-center-home">
-        <div className="card__body">
+      <ProjectBudgetsEacContent />
+      {/* Closing Manager dashboard, kept for reference while the Project Budgets screen is in place. */}
+      <div hidden>
           <div className="command-center-tab-row">
             <TabStrip
               tabs={commandCenterTabs}
@@ -1933,8 +1940,7 @@ function HomeShell() {
               </p>
             </div>
           )}
-        </div>
-      </Card>
+      </div>
     </ShellLayout>
   )
 }

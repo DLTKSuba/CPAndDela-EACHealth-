@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import clsx from 'clsx'
 import { Icon } from './Icon'
 import './LeftSidebar.css'
@@ -17,6 +18,10 @@ export interface LeftSidebarNavItem {
   panelIcon?: string
   panelContentId?: string
   useGradientHeader?: boolean
+  /** Count shown on the icon (e.g. pending items). */
+  badge?: number | string
+  /** Hairline rule below this item, inside the same section card. */
+  dividerAfter?: boolean
 }
 
 export interface LeftSidebarSection {
@@ -68,8 +73,8 @@ export function LeftSidebar({
             const itemId = `left-sidebar-item-${sectionIndex}-${itemIndex}`
 
             return (
+              <Fragment key={itemId}>
               <a
-                key={itemId}
                 href={item.href ?? '#'}
                 className={clsx(
                   'left-sidebar__item',
@@ -82,6 +87,7 @@ export function LeftSidebar({
                 data-use-gradient-header={String(item.useGradientHeader ?? false)}
                 data-left-sidebar-item
                 title={item.label}
+                aria-label={item.badge != null ? `${item.label} (${item.badge})` : undefined}
               >
                 <span className="left-sidebar__icon">
                   {item.isCustom && item.customSrc ? (
@@ -93,9 +99,18 @@ export function LeftSidebar({
                   ) : item.icon ? (
                     <Icon name={item.icon} />
                   ) : null}
+                  {item.badge != null && (
+                    <span className="left-sidebar__badge" aria-hidden="true">
+                      {item.badge}
+                    </span>
+                  )}
                 </span>
                 <span className="left-sidebar__label">{item.label}</span>
               </a>
+              {item.dividerAfter && (
+                <span className="left-sidebar__divider" aria-hidden="true" />
+              )}
+              </Fragment>
             )
           })}
         </div>

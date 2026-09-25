@@ -87,6 +87,14 @@
   );
 }
 
+/* Left-sidebar alignment reads the other way: the panel runs one step past the rail's bottom. */
+.shell-layout .shell-layout__container[data-panel-bottom-align="left-rail"] .shell-panel--right {
+  bottom: max(
+    calc(var(--shell-panel-content-bottom-offset, 0px) - var(--space-5)),
+    calc(var(--space-2-5) / 2)
+  );
+}
+
 /* Footer-aware sidebar positioning (from Harmony components.css – keeps sidebars above footer) */
 
 /* CP variant: gap from header */

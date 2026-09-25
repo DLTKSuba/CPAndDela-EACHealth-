@@ -84,15 +84,660 @@
   box-shadow: var(--shadow-xl);
 }
 
-/* Command Center home card: enforce Harmony outer radius + clip (children often square). */
-.command-center-home.card {
-  background-color: #ffffff;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+/* Harmony keeps the left panel's header clear of its rail but has no matching rule for the
+   right panel, so the rail icons land on Close / Pop out. Mirror the left-panel treatment. */
+.command-center-shell .shell-panel--right .shell-panel__header {
+  padding-right: calc(var(--sidebar-width) + var(--space-4));
 }
 
-.command-center-home .card__body {
-  background-color: #ffffff;
+/* Brand wordmark carries the page title weight now that the page header is gone. */
+.command-center-shell .header__title {
+  font-size: var(--heading-l);
+  font-weight: var(--font-semibold);
+}
+
+/* EAC Health (Project Budgets / EACs) — Costpoint reference look, Harmony type scale */
+.project-budget-eac {
+  --pb-row-height: var(--space-6);
+  /* Table typography spec: 11pt, #333333 */
+  --pb-table-font-size: 11pt;
+  --pb-table-fg: #333333;
+  --pb-radius-panel: var(--radius-04);
+  --pb-radius-control: calc(var(--radius-03) + 2px);
+  --pb-radius-input: 2px;
+  --pb-control-height: var(--input-height-cp);
+  --pb-button-height: var(--button-height-xs);
+  /* Costpoint grid chrome, sampled from the reference screenshot; no Harmony token matches. */
+  --pb-grid-line: #e1e5eb;
+  --pb-grid-line-strong: #c3cad4;
+  --pb-shaded-bg: #e9ecf0;
+  --pb-hatch: repeating-linear-gradient(135deg, #eceff3 0 1px, #f8f9fb 1px 4px);
+  --pb-selected-bg: #e6ecee;
+  --pb-active-cell-bg: #dbf2f8;
+  --pb-approved-bg: #c9efc0;
+  --pb-complete-bg: #fbf5b4;
+  --pb-working-bg: #f8caca;
+  --pb-incomplete-bg: #f3a9a9;
+  --pb-at-risk-bg: #f6b2b2;
+  --pb-healthy-bg: #bdf0a9;
+  --pb-warning-bg: #ffffb0;
+  --pb-smart-summary-bg: #7a33d6;
+  --pb-tab-active-bg: #dbe7f5;
+  --pb-disabled-border: #c7d5e6;
+  --pb-disabled-fg: #a8b7ca;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+}
+
+.project-budget-panel {
+  overflow: hidden;
+  border: var(--border-width-thin) solid var(--border-color);
+  border-top: var(--border-width-medium) solid var(--theme-primary);
+  border-radius: var(--pb-radius-panel);
+  background-color: var(--elevated-bg);
+}
+
+.project-budget-panel__titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: var(--space-10);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-3);
+  border-bottom: var(--border-width-thin) solid var(--border-light);
+}
+
+.project-budget-panel__titlebar h1,
+.project-budget-panel__titlebar h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+}
+
+.project-budget-panel button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+
+.project-budget-panel button:disabled {
+  cursor: default;
+}
+
+.project-budget-panel__window-actions,
+.project-budget-status__views,
+.pb-window-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Dropdown-style triggers (-Default-, Query) */
+.pb-criteria-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  height: var(--pb-control-height);
+  padding: 0 var(--space-2);
+  border: var(--border-width-thin) solid var(--theme-primary);
+  border-radius: var(--pb-radius-control);
+  background-color: var(--elevated-bg);
+  color: var(--theme-primary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-normal);
+}
+
+.project-budget-panel__window-actions .pb-criteria-select {
+  min-width: var(--space-24);
+}
+
+.pb-outline-btn {
+  height: var(--pb-button-height);
+  padding: 0 var(--space-2);
+  border: var(--border-width-thin) solid var(--theme-primary);
+  border-radius: var(--pb-radius-control);
+  background-color: var(--elevated-bg);
+  color: var(--theme-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+}
+
+.pb-criteria-select:hover,
+.pb-outline-btn:hover {
+  background-color: var(--hover-bg);
+}
+
+.pb-window-controls {
+  gap: 0;
+  margin-left: var(--space-1);
+}
+
+.pb-window-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  padding: 0;
+  border: 0;
+  border-radius: var(--pb-radius-control);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.pb-window-controls button:hover {
+  background-color: var(--hover-bg);
+}
+
+.pb-window-controls__square {
+  display: block;
+  width: var(--space-3);
+  height: var(--space-3);
+  border: calc(var(--border-width-thin) * 1.5) solid currentColor;
+  border-radius: 1px;
+}
+
+/* Criteria */
+/* Column stops are percentages of panel width, measured from the Costpoint reference. */
+.project-budget-criteria {
+  display: grid;
+  grid-template-columns:
+    max-content 3% 23.8% 1.4% 23.7% 0.3%
+    minmax(max-content, 8.1%) 7.3% minmax(0, 5.1%) max-content minmax(0, 1fr);
+  grid-template-areas:
+    "plabel . pinput . pname . inactive inactive inactive checks ."
+    ". . . . smart . flabel finput . checks .";
+  align-items: center;
+  gap: var(--space-1) 0;
+  padding: var(--space-2) 0 var(--space-2) var(--space-5);
+}
+
+.pb-criteria__label {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--font-normal);
+  white-space: nowrap;
+}
+
+.pb-required {
+  margin-left: 2px;
+  color: var(--color-error);
+}
+
+.pb-criteria__label--project { grid-area: plabel; justify-self: end; }
+.pb-criteria__project { grid-area: pinput; }
+.pb-criteria__name { grid-area: pname; }
+.pb-criteria__inactive { grid-area: inactive; }
+.pb-criteria__label--fiscal { grid-area: flabel; }
+.pb-criteria__fiscal { grid-area: finput; }
+
+.pb-criteria__checks {
+  grid-area: checks;
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  gap: var(--space-1);
+}
+
+.pb-input {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: var(--pb-control-height);
+  border: var(--border-width-thin) solid var(--pb-grid-line-strong);
+  border-radius: var(--pb-radius-input);
+  background-color: var(--elevated-bg);
+}
+
+.pb-input input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--space-1);
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  outline: none;
+}
+
+.pb-input:focus-within {
+  border-color: var(--theme-primary);
+}
+
+.pb-input svg {
+  flex: none;
+  margin-right: var(--space-1);
+  color: var(--text-secondary);
+}
+
+.pb-input--readonly {
+  background-color: var(--pb-shaded-bg);
+}
+
+.pb-input__dot {
+  flex: none;
+  width: calc(var(--space-2) + 2px);
+  height: calc(var(--space-2) + 2px);
+  margin-right: var(--space-1);
+  border-radius: var(--radius-full);
+  background-color: var(--text-primary);
+}
+
+/* Reference places the button's left edge ~49% into the project-name column, same height as inputs. */
+.pb-smart-summary {
+  grid-area: smart;
+  justify-self: start;
+  height: var(--pb-control-height);
+  margin-left: 49%;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--pb-radius-control);
+  background: var(--gradient-dela);
+  color: var(--text-inverse);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  white-space: nowrap;
+}
+
+.pb-smart-summary:hover {
+  background: var(--gradient-dela-hover-bg), var(--gradient-dela);
+}
+
+.pb-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+/* Costpoint-style square checkbox */
+.pb-checkbox {
+  appearance: none;
+  display: inline-block;
+  flex: none;
+  width: calc(var(--space-3) + 1px);
+  height: calc(var(--space-3) + 1px);
+  margin: 0;
+  border: var(--border-width-thin) solid #8b94a3;
+  border-radius: 2px;
+  background-color: var(--elevated-bg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 90%;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.pb-checkbox:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23252b36' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.pb-checkbox:disabled {
+  border-color: #c4c9d2;
+  background-color: #eef0f3;
+  cursor: default;
+}
+
+.pb-checkbox:disabled:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%239aa1ad' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.pb-checkbox:focus-visible {
+  outline: 2px solid var(--theme-primary);
+  outline-offset: 1px;
+}
+
+/* Status panel toolbar */
+.pb-find {
+  width: calc(var(--space-24) + var(--space-8));
+}
+
+.pb-view-toggle {
+  display: inline-flex;
+  overflow: hidden;
+  border: var(--border-width-thin) solid var(--theme-primary);
+  border-radius: var(--pb-radius-control);
+}
+
+.pb-view-toggle button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-7);
+  height: calc(var(--pb-button-height) - 2px);
+  padding: 0;
+  border: 0;
+  background-color: var(--elevated-bg);
+  color: var(--theme-primary);
+}
+
+.pb-view-toggle button.is-active {
+  background-color: var(--theme-primary);
+  color: var(--text-inverse);
+}
+
+.pb-view-toggle__card {
+  display: block;
+  width: var(--space-3);
+  height: calc(var(--space-2) + 1px);
+  border: calc(var(--border-width-thin) * 1.5) solid currentColor;
+  border-radius: 2px;
+}
+
+.project-budget-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+}
+
+.project-budget-actions button {
+  height: var(--pb-button-height);
+  padding: 0 var(--space-2);
+  border: var(--border-width-thin) solid var(--theme-primary);
+  border-radius: var(--pb-radius-control);
+  background-color: var(--elevated-bg);
+  color: var(--theme-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+}
+
+.project-budget-actions button:not(:disabled):hover {
+  background-color: var(--hover-bg);
+}
+
+.project-budget-actions button:disabled {
+  border-color: var(--pb-disabled-border);
+  color: var(--pb-disabled-fg);
+}
+
+/* Split grid: frozen left pane + scrollable right pane */
+.pb-grid {
+  display: flex;
+  height: 20rem;
+  border: var(--border-width-thin) solid var(--pb-grid-line-strong);
+}
+
+/* Harmony's reset sets scrollbar-width/color on *, which makes Chromium ignore
+   ::-webkit-scrollbar and fall back to hidden macOS overlay scrollbars. */
+.pb-grid__pane {
+  overflow: scroll;
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
+
+.pb-grid__pane .pb-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.pb-grid__pane::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: #eef0f3;
+}
+
+.pb-grid__pane::-webkit-scrollbar-thumb {
+  border: 2px solid #eef0f3;
+  border-radius: 5px;
+  background-color: #b6bdc8;
+}
+
+.pb-grid__pane::-webkit-scrollbar-corner {
+  background-color: #eef0f3;
+}
+
+.pb-grid__pane--left {
+  overflow-y: hidden;
+  flex: 0 1 auto;
+  max-width: 60%;
+}
+
+.pb-grid__pane--right {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.pb-grid__splitter {
+  flex: none;
+  width: var(--space-1);
+  border-right: var(--border-width-thin) solid var(--pb-grid-line-strong);
+  border-left: var(--border-width-thin) solid var(--pb-grid-line-strong);
+  background-color: #dde2e9;
+  cursor: col-resize;
+}
+
+.pb-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  color: var(--pb-table-fg);
+  font-size: var(--pb-table-font-size);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-tight);
+}
+
+.pb-table th,
+.pb-table td {
+  padding: 0 var(--space-1);
+  border-right: var(--border-width-thin) solid var(--pb-grid-line);
+  border-bottom: var(--border-width-thin) solid var(--pb-grid-line);
+  background-color: var(--elevated-bg);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.pb-table th {
+  height: var(--space-12);
+  padding: var(--space-1);
+  border-bottom-color: var(--pb-grid-line-strong);
+  color: var(--pb-table-fg);
+  font-weight: var(--font-bold);
+  text-align: center;
+  text-transform: capitalize;
+  vertical-align: middle;
+  white-space: normal;
+}
+
+.pb-table td {
+  height: var(--pb-row-height);
+}
+
+.pb-table .pb-selector {
+  width: var(--space-4);
+  min-width: var(--space-4);
+  padding: 0;
+  text-align: center;
+  background-color: #f3f4f7;
+}
+
+.pb-table th.pb-selector svg {
+  display: block;
+  margin: 0 auto;
+  color: var(--text-secondary);
+}
+
+.pb-col--xs { min-width: var(--space-10); }
+.pb-col--sm { min-width: var(--space-14); }
+.pb-col--md { min-width: var(--space-20); }
+.pb-col--xl { min-width: calc(var(--space-24) + var(--space-8)); }
+.pb-col--desc { min-width: calc(var(--space-24) * 2); }
+.pb-col--reason { min-width: calc(var(--space-24) * 3); }
+
+.pb-table .pb-cell--center { text-align: center; }
+.pb-table .pb-cell--right { text-align: right; }
+
+.pb-table .pb-row--locked td {
+  background: var(--pb-hatch);
+}
+
+.pb-table .pb-row--filter td {
+  background-color: var(--elevated-bg);
+}
+
+.pb-table td.pb-cell--shaded {
+  background: var(--pb-shaded-bg);
+}
+
+/* Inset shadows, not borders: in a collapsed table the row above owns the shared top border. */
+.pb-table .pb-row--selected td {
+  background: var(--pb-selected-bg);
+  box-shadow:
+    inset 0 var(--border-width-thin) 0 var(--theme-primary),
+    inset 0 calc(var(--border-width-thin) * -1) 0 var(--theme-primary);
+}
+
+.pb-table .pb-row--selected td.pb-cell--active {
+  background: var(--pb-active-cell-bg);
+}
+
+.pb-table td.pb-cell--approved { background: var(--pb-approved-bg); }
+.pb-table td.pb-cell--complete { background: var(--pb-complete-bg); }
+.pb-table td.pb-cell--working { background: var(--pb-working-bg); }
+.pb-table td.pb-cell--incomplete { background: var(--pb-incomplete-bg); }
+.pb-table td.pb-cell--at-risk { background: var(--pb-at-risk-bg); }
+.pb-table td.pb-cell--healthy { background: var(--pb-healthy-bg); }
+.pb-table td.pb-cell--warning { background: var(--pb-warning-bg); }
+
+.pb-link {
+  color: var(--link-color);
+  text-decoration: underline;
+}
+
+.pb-select-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* Detail tab strip */
+.pb-detail-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) 0;
+  padding: var(--space-2);
+}
+
+.pb-detail-tabs button {
+  position: relative;
+  height: var(--space-6);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--pb-radius-control);
+  background: transparent;
+  color: var(--theme-primary);
+  font-size: var(--text-13);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+}
+
+.pb-detail-tabs button + button::before {
+  content: "";
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
+  left: 0;
+  border-left: var(--border-width-thin) solid var(--pb-grid-line-strong);
+}
+
+.pb-detail-tabs button:hover {
+  text-decoration: underline;
+}
+
+.pb-detail-tabs button.is-active {
+  background-color: var(--pb-tab-active-bg);
+}
+
+.pb-detail-tabs button.is-active::before,
+.pb-detail-tabs button.is-active + button::before {
+  display: none;
+}
+
+.pb-detail-tabs .pb-detail-tabs__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-5);
+  margin-left: var(--space-2);
+  padding: 0;
+  border: var(--border-width-thin) solid #8b94a3;
+  border-radius: var(--pb-radius-control);
+  color: var(--text-primary);
+}
+
+/* EAC Health Indicator detail panel */
+.pb-breadcrumb a {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.pb-indicator {
+  overflow-x: auto;
+  padding: var(--space-1) 0 var(--space-2);
+}
+
+.pb-health-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--pb-table-fg);
+  font-size: var(--pb-table-font-size);
+}
+
+.pb-health-summary__label {
+  font-weight: var(--font-bold);
+}
+
+.pb-health-summary__value {
+  padding: 2px var(--space-2);
+  border-radius: var(--pb-radius-control);
+  font-weight: var(--font-bold);
+}
+
+.pb-health-summary__value.pb-cell--at-risk { background: var(--pb-at-risk-bg); }
+.pb-health-summary__value.pb-cell--healthy { background: var(--pb-healthy-bg); }
+
+
+.pb-table--indicator {
+  min-width: 100%;
+  border: var(--border-width-thin) solid var(--pb-grid-line-strong);
+}
+
+.pb-table--indicator th {
+  white-space: nowrap;
+}
+
+.pb-table--indicator th:last-child,
+.pb-table--indicator td:last-child {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .project-budget-criteria {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "plabel pinput pname"
+      ". . smart"
+      "inactive inactive checks"
+      "flabel finput checks";
+  }
 }
 
 /* Tabs + toolbar actions (e.g. refresh) on one row; action right-aligned with tab strip. */
@@ -746,15 +1391,6 @@ html.theme-cp:not(.dark) .command-center-requisition-late-items__vs-sub {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   color: var(--text-secondary);
-}
-
-.command-center-use-case {
-  min-width: 0;
-}
-
-.command-center-use-case .dropdown__trigger {
-  min-width: 16rem;
-  max-width: 22rem;
 }
 
 /* Closing Manager Command Center (reference UI) */

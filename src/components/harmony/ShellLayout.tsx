@@ -58,8 +58,9 @@ export interface ShellLayoutProps {
   /**
    * 'viewport' (default) keeps the Harmony footer-aware bottom edge.
    * 'content' ends the right panel where the main content ends.
+   * 'left-rail' ends the right panel where the left sidebar ends.
    */
-  rightShellPanelBottomAlign?: 'viewport' | 'content'
+  rightShellPanelBottomAlign?: 'viewport' | 'content' | 'left-rail'
   /**
    * 'center' (default) keeps the Harmony vertically centred rail.
    * 'content' starts the rail where the main content starts.
@@ -158,7 +159,8 @@ export function ShellLayout({
 
   // The rail and panel are fixed to the viewport, so content edges have to be measured.
   useEffect(() => {
-    const alignBottom = rightShellPanelBottomAlign === 'content'
+    const alignBottom =
+      rightShellPanelBottomAlign === 'content' || rightShellPanelBottomAlign === 'left-rail'
     const alignTop = rightSidebarAlign === 'content'
     if (!alignBottom && !alignTop) return
     const container = containerRef.current
@@ -170,7 +172,12 @@ export function ShellLayout({
       const bounds = main.getBoundingClientRect()
       if (alignBottom) {
         const paddingBottom = parseFloat(styles.paddingBottom) || 0
-        const contentBottom = bounds.bottom - paddingBottom
+        const leftSidebar =
+          rightShellPanelBottomAlign === 'left-rail'
+            ? container.querySelector<HTMLElement>('.shell-layout__left-sidebar')
+            : null
+        const leftSidebarBottom = leftSidebar?.getBoundingClientRect().bottom
+        const contentBottom = leftSidebarBottom ?? bounds.bottom - paddingBottom
         const offset = Math.max(0, window.innerHeight - contentBottom)
         container.style.setProperty('--shell-panel-content-bottom-offset', `${offset}px`)
       }
@@ -182,8 +189,9 @@ export function ShellLayout({
           : null
         const rail = container.querySelector<HTMLElement>('.shell-layout__right-sidebar')
         const firstItem = rail?.querySelector<HTMLElement>('[data-right-sidebar-item]')
-        if (anchor && rail && firstItem) {
-          const anchorBounds = anchor.getBoundingClientRect()
+        const anchorBounds = anchor?.getBoundingClientRect()
+        // A hidden anchor measures as a zero box, which would drag the rail under the header.
+        if (anchorBounds && anchorBounds.height > 0 && rail && firstItem) {
           const railBounds = rail.getBoundingClientRect()
           const itemBounds = firstItem.getBoundingClientRect()
           // Keep the first rail item centred on the anchor, whatever padding the rail carries.
