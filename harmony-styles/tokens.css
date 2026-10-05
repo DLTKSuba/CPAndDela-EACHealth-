@@ -169,6 +169,9 @@
   --dela-panel-content-bg: var(--card-bg);
   --dela-panel-input-bg: var(--input-bg);
   --dela-panel-card-bg: var(--input-bg);
+  /* Dela suggested prompt cards (lavender tint of --gradient-dela-end) */
+  --dela-prompt-card-bg: rgba(66, 63, 226, 0.2);
+  --dela-prompt-card-hover-bg: rgba(66, 63, 226, 0.28);
   /* Shell panel full width (100vw); --panel-width-full is 1300px for other use) */
   --shell-panel-width-full: 100vw;
   /* Dela gradient header content - always light for contrast (not overridden in dark mode) */

@@ -25,6 +25,8 @@ import { ProjectBudgetsEacContent } from './ProjectBudgetsEacContent'
 const DEFAULT_THEME = 'theme-cp'
 
 const PROTOTYPE_VERSION_OPTIONS: Option[] = [
+  { value: 'eac-health', label: 'EAC Health' },
+  { value: 'eac-health-list', label: 'EAC Health V2 (no cards)' },
   { value: 'e-e', label: 'E-E' },
 ]
 
@@ -1679,7 +1681,7 @@ export function RequisitionDetailsTabView({ prId }: { prId: string }) {
 }
 
 function HomeShell() {
-  const [prototypeVersion, setPrototypeVersion] = useState('e-e')
+  const [prototypeVersion, setPrototypeVersion] = useState('eac-health')
   const closeThroughDelaEnabled = USE_CASE_SCENARIO !== 'dela-not-enabled'
   const missingDefaultJob = USE_CASE_SCENARIO === 'missing-default-job'
   const [activeTabId, setActiveTabId] = useState<string>('closing-manager')
@@ -1800,6 +1802,13 @@ function HomeShell() {
             key={`v2-${USE_CASE_SCENARIO}`}
             closeThroughDelaEnabled={closeThroughDelaEnabled}
             missingDefaultJob={missingDefaultJob}
+          />
+        ) : prototypeVersion === 'eac-health' || prototypeVersion === 'eac-health-list' ? (
+          <DelaProjectBudgetContent
+            key={`${prototypeVersion}-${USE_CASE_SCENARIO}`}
+            scenario="eac-health"
+            eacHealthLayout={prototypeVersion === 'eac-health-list' ? 'list' : 'cards'}
+            suggestedPrompt="Show EAC health"
           />
         ) : (
           <DelaProjectBudgetContent key={`budget-${USE_CASE_SCENARIO}`} />

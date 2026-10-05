@@ -709,6 +709,266 @@
   margin-top: 1px;
 }
 
+/* EAC health: verdict, interpretation, then one card per indicator */
+.dela-eac-health {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dela-eac-health__context {
+  margin: calc(-1 * var(--space-2)) 0 0;
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  color: var(--text-secondary);
+}
+
+.dela-eac-health__overall {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--border-width-thin) solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-bg);
+}
+
+.dela-eac-health__overall--risk {
+  border-color: var(--alert-chip-error-fg);
+  background-color: var(--alert-chip-error-bg);
+}
+
+.dela-eac-health__overall-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+
+.dela-eac-health__overall-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+}
+
+.dela-eac-health__overall-count {
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  color: var(--text-secondary);
+}
+
+.dela-eac-health__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dela-eac-health__indicator {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-width-thin) solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-bg);
+}
+
+.dela-eac-health__indicator-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.dela-eac-health__indicator-name {
+  min-width: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+}
+
+.dela-eac-health__figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.dela-eac-health__figures dt {
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  color: var(--text-secondary);
+}
+
+.dela-eac-health__figures dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.dela-eac-health__figures dd.dela-eac-health__variance--risk {
+  color: var(--color-error);
+}
+
+.dela-eac-health__reason {
+  margin: 0;
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+}
+
+/* EAC health, list layout: no containers, rows split by hairlines only */
+.dela-eac-rows__verdict {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+}
+
+.dela-eac-rows__verdict svg {
+  flex-shrink: 0;
+}
+
+.dela-eac-rows__verdict strong {
+  font-weight: var(--font-semibold);
+}
+
+.dela-eac-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--border-width-thin) solid var(--border-light);
+}
+
+.dela-eac-rows__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2-5) 0;
+  border-bottom: var(--border-width-thin) solid var(--border-light);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+}
+
+.dela-eac-rows__name {
+  min-width: 0;
+  font-weight: var(--font-semibold);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dela-eac-rows__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.dela-eac-rows__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  color: var(--text-secondary);
+}
+
+.dela-eac-rows__status svg {
+  flex-shrink: 0;
+}
+
+.dela-eac-rows__why {
+  min-width: 0;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dela-eac-rows__value {
+  font-weight: var(--font-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.dela-eac-rows__value.dela-eac-health__variance--risk {
+  color: var(--color-error);
+}
+
+.dela-eac-rows__answer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.dela-eac-rows__figures {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.dela-eac-health__healthy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dela-eac-health__steps {
+  margin: 0;
+  padding-left: var(--space-5);
+  list-style: decimal;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+}
+
+/* Pinned above the composer; offset by the body padding so cards start under
+   the "D" of the Dela AI panel title, like the quick actions row. */
+.dela-eac-health__follow-ups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  margin-left: calc(-1 * var(--space-4));
+}
+
+.dela-eac-health__follow-up {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  border-radius: var(--radius-lg);
+  background-color: var(--dela-prompt-card-bg);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.dela-eac-health__follow-up:hover {
+  background-color: var(--dela-prompt-card-hover-bg);
+}
+
+.dela-eac-health__follow-up:focus-visible {
+  outline: 2px solid var(--theme-primary);
+  outline-offset: 2px;
+}
+
 .dela-panel__input-action--send {
   color: var(--theme-primary);
 }

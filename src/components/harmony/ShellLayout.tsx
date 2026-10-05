@@ -286,6 +286,7 @@ export function ShellLayout({
               width="narrow"
               variant={rightShellPanelVariant}
               showPopout
+              resizable={rightShellPanelVariant === 'dela'}
               onClose={rightRailPanel.closePanel}
               className="shell-layout__right-shell-panel"
             >

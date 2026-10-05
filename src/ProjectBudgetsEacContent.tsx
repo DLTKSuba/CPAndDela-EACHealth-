@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import clsx from 'clsx'
 import { Icon } from './components/harmony/Icon'
+import { EAC_HEALTH_SECTION_ID, HEALTH_INDICATOR_ROWS, OVERALL_HEALTH } from './eacHealth'
 
 type Check = { checked: boolean; disabled?: boolean }
 
@@ -87,17 +88,6 @@ const DETAIL_TABS = [
 ] as const
 
 const ACTIVE_DETAIL_TAB = 'EAC Health Indicator'
-
-const HEALTH_INDICATOR_ROWS = [
-  { description: 'Budget Revenue', budget: '$256,409', eac: '$0', variance: '-256409.02', variancePct: '-100.0%', status: 'At Risk', reason: 'Forecast Revenue ($0) is 100% below Budget Revenue ($256,409)', selected: true },
-  { description: 'Hours Total', budget: '6,010', eac: '100.3', variance: '-5909.97', variancePct: '-98.34%', status: 'At Risk', reason: 'Project is 98% under-utilized in terms of hours' },
-  { description: 'Raw Cost Total', budget: '$179,500', eac: '$2,501', variance: '-176999.25', variancePct: '-98.61%', status: 'At Risk', reason: 'Raw Cost Forecast ($2,501) differs significantly from Budget ($179,500). Variance exceeds acceptable thresholds.' },
-  { description: 'Burdened Cost Total', budget: '$244,109', eac: '$2,801', variance: '-241398.23', variancePct: '-98.85%', status: 'At Risk', reason: 'Lower cost than budget' },
-  { description: 'EAC Age', budget: 'N/A', eac: '0 periods', variance: '0 periods', variancePct: '-', status: 'Healthy', reason: 'EAC data is up-to-date; changes were recent (not stale data)' },
-] as const
-
-const AT_RISK_COUNT = HEALTH_INDICATOR_ROWS.filter((r) => r.status === 'At Risk').length
-const OVERALL_HEALTH = AT_RISK_COUNT > 0 ? 'At Risk' : 'Healthy'
 
 function GridCheckbox({ value, label }: { value: Check; label: string }) {
   return (
@@ -368,9 +358,9 @@ export function ProjectBudgetsEacContent() {
         </nav>
       </section>
 
-      <section className="project-budget-panel" aria-labelledby="eac-health-indicator-title">
+      <section className="project-budget-panel" aria-labelledby={EAC_HEALTH_SECTION_ID}>
         <div className="project-budget-panel__titlebar">
-          <h2 id="eac-health-indicator-title" className="pb-breadcrumb">
+          <h2 id={EAC_HEALTH_SECTION_ID} className="pb-breadcrumb">
             <a href="#" onClick={(e) => e.preventDefault()}>Project Budgets / EACs</a>
             <span aria-hidden="true"> &gt; </span>
             {detailTab}
@@ -401,7 +391,7 @@ export function ProjectBudgetsEacContent() {
               {HEALTH_INDICATOR_ROWS.map((row) => (
                 <tr
                   key={row.description}
-                  className={clsx('pb-row--locked', 'selected' in row && row.selected && 'pb-row--selected')}
+                  className={clsx('pb-row--locked', row.selected && 'pb-row--selected')}
                 >
                   <td className="pb-selector" />
                   <td>{row.description}</td>

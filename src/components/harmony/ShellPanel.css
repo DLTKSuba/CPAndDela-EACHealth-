@@ -69,6 +69,94 @@
   transition: width var(--transition-base);
 }
 
+/* Drag-to-resize: handles sit on the panel's inner edge, bottom edge and inner-bottom corner */
+.shell-layout .shell-panel--resizing {
+  transition: none;
+  user-select: none;
+}
+
+.shell-panel__resize-handle {
+  position: absolute;
+  z-index: 2;
+  touch-action: none;
+}
+
+.shell-panel__resize-handle--inline {
+  top: 0;
+  bottom: var(--space-3);
+  width: var(--space-2);
+  cursor: ew-resize;
+}
+
+.shell-panel--right .shell-panel__resize-handle--inline {
+  left: 0;
+}
+
+.shell-panel--left .shell-panel__resize-handle--inline {
+  right: 0;
+}
+
+.shell-panel__resize-handle--block {
+  bottom: 0;
+  height: var(--space-2);
+  cursor: ns-resize;
+}
+
+.shell-panel--right .shell-panel__resize-handle--block {
+  left: var(--space-3);
+  right: var(--sidebar-width);
+}
+
+.shell-panel--left .shell-panel__resize-handle--block {
+  left: var(--sidebar-width);
+  right: var(--space-3);
+}
+
+.shell-panel__resize-handle--block::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-0-5);
+  width: var(--space-10);
+  height: var(--space-1);
+  border-radius: var(--radius-full);
+  background-color: var(--border-color);
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.shell-panel__resize-handle--block:hover::after,
+.shell-panel--resizing .shell-panel__resize-handle--block::after {
+  opacity: 1;
+}
+
+.shell-panel__resize-handle--corner {
+  bottom: 0;
+  width: var(--space-3);
+  height: var(--space-3);
+}
+
+.shell-panel--right .shell-panel__resize-handle--corner {
+  left: 0;
+  cursor: nesw-resize;
+}
+
+.shell-panel--left .shell-panel__resize-handle--corner {
+  right: 0;
+  cursor: nwse-resize;
+}
+
+.shell-panel__resize-handle--inline:hover,
+.shell-panel--resizing .shell-panel__resize-handle--inline {
+  box-shadow: inset calc(var(--border-width-thin) * 2) 0 0 var(--theme-primary);
+}
+
+.shell-panel--left .shell-panel__resize-handle--inline:hover,
+.shell-panel--left.shell-panel--resizing .shell-panel__resize-handle--inline {
+  box-shadow: inset calc(var(--border-width-thin) * -2) 0 0 var(--theme-primary);
+}
+
 .shell-panel__header {
   flex-shrink: 0;
   min-height: calc(var(--space-2) * 2 + var(--icon-lg));

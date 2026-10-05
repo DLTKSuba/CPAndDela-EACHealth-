@@ -1,10 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { Icon } from './Icon'
 import { Button } from './Button'
 import { Input } from './Input'
 import { Dropdown } from './Dropdown'
 import { DelaChatHistory } from './DelaChatHistory'
+import {
+  DelaEacHealthFollowUp,
+  DelaEacHealthFollowUps,
+  DelaEacHealthResponse,
+  eacHealthFollowUpPrompts,
+  type EacHealthLayout,
+} from './DelaEacHealthResponse'
 import './DelaPanelContent.css'
 
 interface DelaMessage {
@@ -13,6 +20,11 @@ interface DelaMessage {
 }
 
 type BudgetPhase = 'idle' | 'selecting' | 'confirmed' | 'status-confirmed' | 'cancelled'
+
+type DelaIntent = 'budget' | 'eac-health'
+
+const EAC_HEALTH_PROMPT = /health/i
+const EAC_HEALTH_THINKING_MS = 1200
 
 /** Projects an accountant would start a budget from; the first matches the open screen. */
 const PROJECT_OPTIONS = [
@@ -44,6 +56,9 @@ export interface DelaProjectBudgetContentProps {
   disclaimer?: string
   /** Dropped into the empty composer on first click so the flow can be demoed in two clicks. */
   suggestedPrompt?: string
+  /** `eac-health` answers every opening prompt with the EAC health summary. */
+  scenario?: DelaIntent
+  eacHealthLayout?: EacHealthLayout
 }
 
 export function DelaProjectBudgetContent({
@@ -51,9 +66,12 @@ export function DelaProjectBudgetContent({
   placeholder = 'Ask Dela Anything...',
   disclaimer = 'Disclaimer',
   suggestedPrompt = 'Start project budget',
+  scenario = 'budget',
+  eacHealthLayout = 'cards',
 }: DelaProjectBudgetContentProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const statusStepRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const [draft, setDraft] = useState('')
   const [historyOpen, setHistoryOpen] = useState(false)
   const [messages, setMessages] = useState<DelaMessage[]>([])
@@ -62,6 +80,8 @@ export function DelaProjectBudgetContent({
   const [project, setProject] = useState('')
   const [wbsLevel, setWbsLevel] = useState('')
   const [budgetStatus, setBudgetStatus] = useState('commit-budget')
+  const [intent, setIntent] = useState<DelaIntent>('budget')
+  const [healthReady, setHealthReady] = useState(false)
 
   const hasConversation = messages.length > 0
   const canSend = draft.trim() !== ''
@@ -70,6 +90,10 @@ export function DelaProjectBudgetContent({
   const selectionLocked =
     phase === 'confirmed' || phase === 'status-confirmed' || phase === 'cancelled'
   const statusLocked = phase === 'status-confirmed' || phase === 'cancelled'
+  const followUpPrompts =
+    intent === 'eac-health' && healthReady
+      ? eacHealthFollowUpPrompts(messages.length > 1 ? messages[messages.length - 1].text : null)
+      : []
   const budgetStatusLabel =
     BUDGET_COMPLETION_OPTIONS.find((option) => option.value === budgetStatus)?.label ??
     'Commit Budget'
@@ -79,18 +103,27 @@ export function DelaProjectBudgetContent({
     statusStepRef.current?.scrollIntoView({ block: 'nearest' })
   }, [phase])
 
+  useEffect(() => {
+    if (intent !== 'eac-health' || phase === 'idle' || healthReady) return
+    const timer = window.setTimeout(() => setHealthReady(true), EAC_HEALTH_THINKING_MS)
+    return () => window.clearTimeout(timer)
+  }, [intent, phase, healthReady])
+
   const sendDraft = useCallback(() => {
     const text = draft.trim()
     if (text === '') return
     setMessages((prev) => {
       if (prev.length === 0) {
         setStartedOn(new Date().toLocaleDateString())
+        setIntent(
+          scenario === 'eac-health' || EAC_HEALTH_PROMPT.test(text) ? 'eac-health' : 'budget'
+        )
         setPhase('selecting')
       }
       return [...prev, { id: `dela-message-${Date.now()}`, text }]
     })
     setDraft('')
-  }, [draft])
+  }, [draft, scenario])
 
   const prefillDraft = useCallback(() => {
     if (draft !== '' || suggestedPrompt === '') return
@@ -122,7 +155,36 @@ export function DelaProjectBudgetContent({
     setProject('')
     setWbsLevel('')
     setBudgetStatus('commit-budget')
+    setIntent('budget')
+    setHealthReady(false)
   }, [])
+
+  const askFollowUp = useCallback((prompt: string) => {
+    setMessages((prev) => [...prev, { id: `dela-message-${Date.now()}`, text: prompt }])
+  }, [])
+
+  useEffect(() => {
+    if (intent !== 'eac-health' || messages.length < 2) return
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
+  }, [intent, messages.length])
+
+  const renderUserMessage = (message: DelaMessage) => (
+    <div key={message.id} className="dela-panel__message-group">
+      <div className="dela-panel__message-row dela-panel__message-row--user">
+        <div className="dela-panel__bubble dela-panel__bubble--user">{message.text}</div>
+      </div>
+      <div className="dela-panel__message-actions">
+        <button
+          type="button"
+          className="dela-panel__toolbar-action"
+          aria-label="Copy message"
+          onClick={() => void navigator.clipboard?.writeText(message.text)}
+        >
+          <Icon name="square-2-stack" size="sm" />
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="dela-panel__body">
@@ -199,31 +261,61 @@ export function DelaProjectBudgetContent({
             </div>
           )}
 
-          <div className="dela-panel__scroll">
+          <div className="dela-panel__scroll" ref={scrollRef}>
             {hasConversation ? (
               <>
                 <div className="dela-panel__date-divider">{startedOn}</div>
-                {messages.map((message) => (
-                  <div key={message.id} className="dela-panel__message-group">
-                    <div className="dela-panel__message-row dela-panel__message-row--user">
-                      <div className="dela-panel__bubble dela-panel__bubble--user">
-                        {message.text}
-                      </div>
-                    </div>
-                    <div className="dela-panel__message-actions">
-                      <button
-                        type="button"
-                        className="dela-panel__toolbar-action"
-                        aria-label="Copy message"
-                        onClick={() => void navigator.clipboard?.writeText(message.text)}
-                      >
-                        <Icon name="square-2-stack" size="sm" />
-                      </button>
+                {(intent === 'eac-health' ? messages.slice(0, 1) : messages).map(renderUserMessage)}
+
+                {phase !== 'idle' && intent === 'eac-health' && (
+                  <>
+                  <div className="dela-panel__message-row">
+                    <span className="dela-panel__mark-button" aria-hidden="true">
+                      <img
+                        src={healthReady ? '/RS_Dela_Active.svg' : '/Stars.svg'}
+                        alt=""
+                        className={
+                          healthReady
+                            ? 'dela-panel__message-icon dela-panel__message-icon--dela'
+                            : 'dela-panel__message-icon dela-panel__message-icon--thinking'
+                        }
+                      />
+                    </span>
+                    <div className="dela-panel__turn">
+                      {healthReady ? (
+                        <DelaEacHealthResponse layout={eacHealthLayout} />
+                      ) : (
+                        <p className="dela-panel__readiness" role="status" aria-live="polite">
+                          Checking EAC health indicators ...
+                        </p>
+                      )}
                     </div>
                   </div>
-                ))}
+                  {healthReady &&
+                    messages.slice(1).map((message) => (
+                      <Fragment key={message.id}>
+                        {renderUserMessage(message)}
+                        <div className="dela-panel__message-row">
+                          <span className="dela-panel__mark-button" aria-hidden="true">
+                            <img
+                              src="/RS_Dela_Active.svg"
+                              alt=""
+                              className="dela-panel__message-icon dela-panel__message-icon--dela"
+                            />
+                          </span>
+                          <div className="dela-panel__turn">
+                            <DelaEacHealthFollowUp
+                              prompt={message.text}
+                              layout={eacHealthLayout}
+                            />
+                          </div>
+                        </div>
+                      </Fragment>
+                    ))}
+                  </>
+                )}
 
-                {phase !== 'idle' && (
+                {phase !== 'idle' && intent === 'budget' && (
                   <div className="dela-panel__message-row">
                     <button
                       type="button"
@@ -358,6 +450,10 @@ export function DelaProjectBudgetContent({
               <p className="dela-panel__greeting">{greeting}</p>
             )}
           </div>
+
+          {followUpPrompts.length > 0 && (
+            <DelaEacHealthFollowUps prompts={followUpPrompts} onAsk={askFollowUp} />
+          )}
 
           <div className="dela-panel__input-row">
             <div className="dela-panel__input-box">
