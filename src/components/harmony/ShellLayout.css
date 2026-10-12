@@ -95,6 +95,11 @@
   );
 }
 
+/* Long Dela answers (EAC health) need the full height, so the panel drops to the viewport edge. */
+.shell-layout .shell-layout__container[data-panel-bottom-align] .shell-panel--right:has(.dela-panel__body[data-fill-viewport="true"]) {
+  bottom: calc(var(--space-2-5) / 2);
+}
+
 /* Footer-aware sidebar positioning (from Harmony components.css – keeps sidebars above footer) */
 
 /* CP variant: gap from header */

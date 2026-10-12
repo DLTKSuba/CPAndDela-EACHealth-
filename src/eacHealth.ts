@@ -34,3 +34,6 @@ export const OVERALL_HEALTH: EacHealthStatus = AT_RISK_COUNT > 0 ? 'At Risk' : '
 
 /** Element id of the page section Dela links back to. */
 export const EAC_HEALTH_SECTION_ID = 'eac-health-indicator-title'
+
+/** Window event Dela fires to un-hide the page's health table before scrolling to it. */
+export const EAC_HEALTH_REVEAL_EVENT = 'eac-health:reveal'

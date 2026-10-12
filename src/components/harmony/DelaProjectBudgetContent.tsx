@@ -187,7 +187,10 @@ export function DelaProjectBudgetContent({
   )
 
   return (
-    <div className="dela-panel__body">
+    <div
+      className="dela-panel__body"
+      data-fill-viewport={intent === 'eac-health' && phase !== 'idle' ? 'true' : undefined}
+    >
       <div className="dela-panel__quick-actions">
         <button
           type="button"

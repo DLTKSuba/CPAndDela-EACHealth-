@@ -723,40 +723,53 @@
   color: var(--text-secondary);
 }
 
+/* Alert banner: accent bar on the leading edge, solid status pill before the title. */
 .dela-eac-health__overall {
+  --overall-accent: var(--alert-chip-success-fg);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border: var(--border-width-thin) solid var(--border-light);
-  border-radius: var(--radius-lg);
-  background-color: var(--surface-bg);
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2-5) var(--space-3);
+  border-left: 3px solid var(--overall-accent);
+  background-color: var(--alert-chip-success-bg);
 }
 
 .dela-eac-health__overall--risk {
-  border-color: var(--alert-chip-error-fg);
+  --overall-accent: var(--alert-chip-error-fg);
   background-color: var(--alert-chip-error-bg);
 }
 
-.dela-eac-health__overall-text {
+.dela-eac-health__overall-head {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-0-5);
+  align-items: center;
+  gap: var(--space-2);
   min-width: 0;
 }
 
-.dela-eac-health__overall-label {
-  font-size: var(--text-sm);
+.dela-eac-health__overall-badge {
+  flex-shrink: 0;
+  border-color: var(--overall-accent);
+  border-radius: var(--radius-full);
+  background-color: var(--overall-accent);
+  color: var(--text-inverse);
   font-weight: var(--font-semibold);
+}
+
+.dela-eac-health__overall-label {
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
   line-height: var(--leading-snug);
   color: var(--text-primary);
 }
 
 .dela-eac-health__overall-count {
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   line-height: var(--leading-snug);
   color: var(--text-secondary);
+}
+
+.dela-eac-health__interpretation-line {
+  display: block;
 }
 
 .dela-eac-health__list {
@@ -920,12 +933,6 @@
   line-height: var(--leading-snug);
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
-}
-
-.dela-eac-health__healthy {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
 }
 
 .dela-eac-health__steps {

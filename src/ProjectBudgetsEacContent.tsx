@@ -1,7 +1,12 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import { Icon } from './components/harmony/Icon'
-import { EAC_HEALTH_SECTION_ID, HEALTH_INDICATOR_ROWS, OVERALL_HEALTH } from './eacHealth'
+import {
+  EAC_HEALTH_REVEAL_EVENT,
+  EAC_HEALTH_SECTION_ID,
+  HEALTH_INDICATOR_ROWS,
+  OVERALL_HEALTH,
+} from './eacHealth'
 
 type Check = { checked: boolean; disabled?: boolean }
 
@@ -203,8 +208,58 @@ function syncScroll(source: HTMLDivElement | null, target: HTMLDivElement | null
   }
 }
 
-export function ProjectBudgetsEacContent() {
+export interface ProjectBudgetsEacContentProps {
+  /** The health table starts hidden, and hides again when Dela opens, until its detail tab is clicked. */
+  delaOpen?: boolean
+}
+
+export function ProjectBudgetsEacContent({ delaOpen = false }: ProjectBudgetsEacContentProps) {
   const [detailTab, setDetailTab] = useState<string>(ACTIVE_DETAIL_TAB)
+  const [healthTableHidden, setHealthTableHidden] = useState(true)
+  useEffect(() => {
+    if (delaOpen) setHealthTableHidden(true)
+  }, [delaOpen])
+  useEffect(() => {
+    const reveal = () => {
+      setDetailTab(ACTIVE_DETAIL_TAB)
+      setHealthTableHidden(false)
+    }
+    window.addEventListener(EAC_HEALTH_REVEAL_EVENT, reveal)
+    return () => window.removeEventListener(EAC_HEALTH_REVEAL_EVENT, reveal)
+  }, [])
+
+  // Dela overlays the page, so the tab row wraps short of the panel to keep every tab clickable.
+  const tabsRef = useRef<HTMLElement>(null)
+  const [tabsOverlap, setTabsOverlap] = useState(0)
+  useEffect(() => {
+    const panel = document.querySelector<HTMLElement>('.shell-panel--right')
+    const tabs = tabsRef.current
+    if (!delaOpen || !panel || !tabs) {
+      setTabsOverlap(0)
+      return
+    }
+    const sync = () => {
+      const overlap = tabs.getBoundingClientRect().right - panel.getBoundingClientRect().left
+      setTabsOverlap(Math.max(0, Math.round(overlap)))
+    }
+    sync()
+    const observer = new ResizeObserver(sync)
+    observer.observe(panel)
+    panel.addEventListener('transitionend', sync)
+    window.addEventListener('resize', sync)
+    return () => {
+      observer.disconnect()
+      panel.removeEventListener('transitionend', sync)
+      window.removeEventListener('resize', sync)
+    }
+  }, [delaOpen])
+
+  const selectDetailTab = (tab: string) => {
+    setDetailTab(tab)
+    if (tab === ACTIVE_DETAIL_TAB) setHealthTableHidden(false)
+  }
+  const isTabActive = (tab: string) =>
+    tab === detailTab && !(healthTableHidden && tab === ACTIVE_DETAIL_TAB)
   const leftPaneRef = useRef<HTMLDivElement>(null)
   const rightPaneRef = useRef<HTMLDivElement>(null)
 
@@ -340,14 +395,23 @@ export function ProjectBudgetsEacContent() {
           </div>
         </div>
 
-        <nav className="pb-detail-tabs" aria-label="Budget status details">
+        <nav
+          ref={tabsRef}
+          className="pb-detail-tabs"
+          aria-label="Budget status details"
+          style={
+            tabsOverlap > 0
+              ? { paddingRight: `calc(${tabsOverlap}px + var(--space-4))` }
+              : undefined
+          }
+        >
           {DETAIL_TABS.map((tab) => (
             <button
               key={tab}
               type="button"
-              className={clsx(tab === detailTab && 'is-active')}
-              aria-current={tab === detailTab ? 'page' : undefined}
-              onClick={() => setDetailTab(tab)}
+              className={clsx(isTabActive(tab) && 'is-active')}
+              aria-current={isTabActive(tab) ? 'page' : undefined}
+              onClick={() => selectDetailTab(tab)}
             >
               {tab}
             </button>
@@ -358,7 +422,11 @@ export function ProjectBudgetsEacContent() {
         </nav>
       </section>
 
-      <section className="project-budget-panel" aria-labelledby={EAC_HEALTH_SECTION_ID}>
+      <section
+        className="project-budget-panel"
+        aria-labelledby={EAC_HEALTH_SECTION_ID}
+        hidden={healthTableHidden}
+      >
         <div className="project-budget-panel__titlebar">
           <h2 id={EAC_HEALTH_SECTION_ID} className="pb-breadcrumb">
             <a href="#" onClick={(e) => e.preventDefault()}>Project Budgets / EACs</a>

@@ -55,6 +55,8 @@ export interface ShellLayoutProps {
   rightShellPanelSlot?: ReactNode
   /** Panel body used only while a Dela AI rail item is active; falls back to rightShellPanelSlot. */
   rightShellPanelDelaSlot?: ReactNode
+  /** Fires when the right panel starts or stops showing a Dela AI rail item. */
+  onDelaPanelOpenChange?: (open: boolean) => void
   /**
    * 'viewport' (default) keeps the Harmony footer-aware bottom edge.
    * 'content' ends the right panel where the main content ends.
@@ -124,6 +126,7 @@ export function ShellLayout({
   rightShellPanelInitialTitleIcon = 'bell',
   rightShellPanelSlot,
   rightShellPanelDelaSlot,
+  onDelaPanelOpenChange,
   rightShellPanelBottomAlign = 'viewport',
   rightSidebarAlign = 'center',
   rightSidebarTopAnchor,
@@ -156,6 +159,13 @@ export function ShellLayout({
     initialTitle: rightShellPanelInitialTitle,
     initialTitleIcon: rightShellPanelInitialTitleIcon,
   })
+
+  const delaPanelOpen = rightRailPanel.open && rightRailPanel.isDelaAI
+  const onDelaPanelOpenChangeRef = useRef(onDelaPanelOpenChange)
+  onDelaPanelOpenChangeRef.current = onDelaPanelOpenChange
+  useEffect(() => {
+    onDelaPanelOpenChangeRef.current?.(delaPanelOpen)
+  }, [delaPanelOpen])
 
   // The rail and panel are fixed to the viewport, so content edges have to be measured.
   useEffect(() => {

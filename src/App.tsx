@@ -1682,6 +1682,7 @@ export function RequisitionDetailsTabView({ prId }: { prId: string }) {
 
 function HomeShell() {
   const [prototypeVersion, setPrototypeVersion] = useState('eac-health')
+  const [delaOpen, setDelaOpen] = useState(false)
   const closeThroughDelaEnabled = USE_CASE_SCENARIO !== 'dela-not-enabled'
   const missingDefaultJob = USE_CASE_SCENARIO === 'missing-default-job'
   const [activeTabId, setActiveTabId] = useState<string>('closing-manager')
@@ -1796,6 +1797,7 @@ function HomeShell() {
       rightSidebarTopAnchor=".project-budget-panel__titlebar"
       rightShellPanelVariant="dela"
       rightShellPanelBottomAlign="left-rail"
+      onDelaPanelOpenChange={setDelaOpen}
       rightShellPanelDelaSlot={
         prototypeVersion === 'v2' ? (
           <DelaPanelContentV2
@@ -1815,7 +1817,7 @@ function HomeShell() {
         )
       }
     >
-      <ProjectBudgetsEacContent />
+      <ProjectBudgetsEacContent delaOpen={delaOpen} />
       {/* Closing Manager dashboard, kept for reference while the Project Budgets screen is in place. */}
       <div hidden>
           <div className="command-center-tab-row">

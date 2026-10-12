@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import type { MouseEvent } from 'react'
 import clsx from 'clsx'
 import { Icon } from './Icon'
@@ -8,6 +7,7 @@ import { Link } from './Link'
 import {
   AT_RISK_COUNT,
   EAC_HEALTH_CONTEXT,
+  EAC_HEALTH_REVEAL_EVENT,
   EAC_HEALTH_SECTION_ID,
   HEALTH_INDICATOR_ROWS,
   OVERALL_HEALTH,
@@ -22,8 +22,20 @@ const AT_RISK_ROWS = HEALTH_INDICATOR_ROWS.filter((row) => row.status === 'At Ri
 const HEALTHY_ROWS = HEALTH_INDICATOR_ROWS.filter((row) => row.status === 'Healthy')
 const RISK_FIRST_ROWS = [...AT_RISK_ROWS, ...HEALTHY_ROWS]
 
-const INTERPRETATION =
-  'Revenue, hours and cost forecasts are all 98–100% below budget, yet the EAC was updated this period. This usually means forecast data hasn’t been entered into this EAC yet, rather than the project genuinely under-running.'
+const INTERPRETATION_LINES = [
+  'All forecasts are 98–100% below budget.',
+  'Forecast data likely hasn’t been entered yet.',
+]
+
+const Interpretation = () => (
+  <p className="dela-panel__response">
+    {INTERPRETATION_LINES.map((line) => (
+      <span key={line} className="dela-eac-health__interpretation-line">
+        {line}
+      </span>
+    ))}
+  </p>
+)
 
 function StatusBadge({ status }: { status: EacHealthStatus }) {
   return (
@@ -119,9 +131,12 @@ function IndicatorRow({ row }: { row: EacHealthIndicator }) {
 
 const scrollToHealthTable = (event: MouseEvent<HTMLAnchorElement>) => {
   event.preventDefault()
-  document
-    .getElementById(EAC_HEALTH_SECTION_ID)
-    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  window.dispatchEvent(new Event(EAC_HEALTH_REVEAL_EVENT))
+  requestAnimationFrame(() =>
+    document
+      .getElementById(EAC_HEALTH_SECTION_ID)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  )
 }
 
 /** Plain-text verdict and divider rows: reads like Dela talking, not a dashboard. */
@@ -153,7 +168,7 @@ function EacHealthListResponse() {
         </span>
       </p>
 
-      <p className="dela-panel__response">{INTERPRETATION}</p>
+      <Interpretation />
 
       <ul className="dela-eac-rows" aria-label="EAC health indicators">
         {RISK_FIRST_ROWS.map((row) => (
@@ -178,7 +193,6 @@ export function DelaEacHealthResponse({ layout = 'cards' }: DelaEacHealthRespons
 }
 
 function EacHealthCardsResponse() {
-  const [showHealthy, setShowHealthy] = useState(false)
   const { projectId, projectName, eacVersion, closedPeriod } = EAC_HEALTH_CONTEXT
 
   return (
@@ -200,47 +214,28 @@ function EacHealthCardsResponse() {
         )}
         role="status"
       >
-        <div className="dela-eac-health__overall-text">
+        <div className="dela-eac-health__overall-head">
+          <Badge
+            variant={OVERALL_HEALTH === 'At Risk' ? 'error' : 'success'}
+            size="medium"
+            className="dela-eac-health__overall-badge"
+          >
+            {OVERALL_HEALTH}
+          </Badge>
           <span className="dela-eac-health__overall-label">Overall health</span>
-          <span className="dela-eac-health__overall-count">
-            {AT_RISK_COUNT} of {HEALTH_INDICATOR_ROWS.length} indicators at risk
-          </span>
         </div>
-        <StatusBadge status={OVERALL_HEALTH} />
+        <span className="dela-eac-health__overall-count">
+          {AT_RISK_COUNT} of {HEALTH_INDICATOR_ROWS.length} indicators at risk
+        </span>
       </div>
 
-      <p className="dela-panel__response">{INTERPRETATION}</p>
+      <Interpretation />
 
-      <ul className="dela-eac-health__list" aria-label="At risk indicators">
-        {AT_RISK_ROWS.map((row) => (
+      <ul className="dela-eac-health__list" aria-label="EAC health indicators">
+        {RISK_FIRST_ROWS.map((row) => (
           <IndicatorCard key={row.description} row={row} />
         ))}
       </ul>
-
-      {HEALTHY_ROWS.length > 0 && (
-        <div className="dela-eac-health__healthy">
-          <button
-            type="button"
-            className="dela-panel__readiness-summary"
-            aria-expanded={showHealthy}
-            onClick={() => setShowHealthy((open) => !open)}
-          >
-            <Icon name="check-circle" size="sm" className="dela-panel__check-icon" />
-            <span className="dela-panel__readiness-summary-text">
-              {HEALTHY_ROWS.length} healthy:{' '}
-              {HEALTHY_ROWS.map((row) => row.description).join(', ')}
-            </span>
-            <Icon name={showHealthy ? 'chevron-up' : 'chevron-down'} size="sm" />
-          </button>
-          {showHealthy && (
-            <ul className="dela-eac-health__list" aria-label="Healthy indicators">
-              {HEALTHY_ROWS.map((row) => (
-                <IndicatorCard key={row.description} row={row} />
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
     </div>
   )
 }
@@ -255,7 +250,7 @@ const findIndicator = (text: string) =>
 
 /** Suggested prompts for the latest Dela answer; `null` means the opening EAC health summary. */
 export function eacHealthFollowUpPrompts(lastPrompt: string | null): string[] {
-  if (lastPrompt === null) return [whyPrompt(AT_RISK_ROWS[0]), NEXT_STEPS_PROMPT]
+  if (lastPrompt === null) return [NEXT_STEPS_PROMPT]
   const text = lastPrompt.toLowerCase()
   const row = findIndicator(text)
   if (row) {
