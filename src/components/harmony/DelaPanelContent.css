@@ -723,20 +723,22 @@
   color: var(--text-secondary);
 }
 
-/* Alert banner: accent bar on the leading edge, solid status pill before the title. */
+/* Alert card: white surface, grey outline, thick status-coloured leading edge, solid pill before the title. */
 .dela-eac-health__overall {
   --overall-accent: var(--alert-chip-success-fg);
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-2-5) var(--space-3);
-  border-left: 3px solid var(--overall-accent);
-  background-color: var(--alert-chip-success-bg);
+  border: var(--border-width-thin) solid var(--border-color);
+  border-left: 6px solid var(--overall-accent);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-bg);
+  box-shadow: var(--shadow-sm);
 }
 
 .dela-eac-health__overall--risk {
   --overall-accent: var(--alert-chip-error-fg);
-  background-color: var(--alert-chip-error-bg);
 }
 
 .dela-eac-health__overall-head {
