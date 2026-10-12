@@ -573,6 +573,7 @@
 .pb-col--xs { min-width: var(--space-10); }
 .pb-col--sm { min-width: var(--space-14); }
 .pb-col--md { min-width: var(--space-20); }
+.pb-col--lg { min-width: var(--space-24); }
 .pb-col--xl { min-width: calc(var(--space-24) + var(--space-8)); }
 .pb-col--desc { min-width: calc(var(--space-24) * 2); }
 .pb-col--reason { min-width: calc(var(--space-24) * 3); }

@@ -13,6 +13,8 @@ type Check = { checked: boolean; disabled?: boolean }
 type BudgetStatus = 'Approved' | 'Complete' | 'Working' | 'Incomplete'
 
 type BudgetRow = {
+  projectId: string
+  projectName: string
   type: 'BUD' | 'EAC'
   version: string
   finalVersion: Check | null
@@ -35,25 +37,31 @@ const on = (disabled = false): Check => ({ checked: true, disabled })
 const off = (disabled = false): Check => ({ checked: false, disabled })
 
 const BUDGET_ROWS: BudgetRow[] = [
-  { type: 'BUD', version: '1', finalVersion: on(), status: 'Approved', sourceType: '', sourceVersion: '', closedPeriod: '05/31/2016', health: '', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(true), approved: on(), subtaskHide: off(true), escalation: '3.00%' },
-  { type: 'BUD', version: '1', finalVersion: on(), status: 'Approved', sourceType: '', sourceVersion: '', closedPeriod: '07/31/2020', health: '', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(true), approved: on(), subtaskHide: off(true), escalation: '3.00%' },
-  { type: 'BUD', version: '2', finalVersion: off(), status: 'Approved', sourceType: 'BUD', sourceVersion: '1', closedPeriod: '05/31/2020', health: '', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(true), approved: on(), subtaskHide: off(true), escalation: '3.00%' },
-  { type: 'BUD', version: '3', finalVersion: off(), status: 'Complete', sourceType: 'BUD', sourceVersion: '2', closedPeriod: '11/30/2020', health: '', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(), approved: off(), subtaskHide: off(true), escalation: '3.00%' },
-  { type: 'BUD', version: '3', finalVersion: null, status: 'Working', sourceType: 'BUD', sourceVersion: '2', closedPeriod: '11/30/2020', health: '', warnings: '222', newBusinessId: '', newBusinessName: '', complete: on(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
-  { type: 'EAC', version: '1', finalVersion: off(true), status: 'Incomplete', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '04/30/2020', health: 'At Risk', warnings: '', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(true), escalation: '3.00%', selected: true },
-  { type: 'EAC', version: '1', finalVersion: null, status: 'Working', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '04/30/2020', health: 'At Risk', warnings: '2', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
-  { type: 'EAC', version: '1', finalVersion: on(), status: 'Complete', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '05/31/2020', health: 'At Risk', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(), approved: off(), subtaskHide: off(true), escalation: '3.00%' },
-  { type: 'EAC', version: '2', finalVersion: null, status: 'Working', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '05/31/2020', health: 'At Risk', warnings: '2', newBusinessId: '', newBusinessName: '', complete: on(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
-  { type: 'EAC', version: '3', finalVersion: null, status: 'Working', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '11/30/2020', health: 'At Risk', warnings: '2', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
-  { type: 'EAC', version: '4', finalVersion: null, status: 'Working', sourceType: 'EAC', sourceVersion: '2', closedPeriod: '05/31/2020', health: 'At Risk', warnings: '0', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
-  { type: 'BUD', version: '1', finalVersion: null, status: 'Working', sourceType: 'NB - 18-0108', sourceVersion: '1', closedPeriod: '11/30/2020', health: '', warnings: '0', newBusinessId: '18-0108', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
-  { type: 'BUD', version: '1', finalVersion: on(true), status: 'Complete', sourceType: 'EXCEL', sourceVersion: '0', closedPeriod: '11/30/2020', health: '', warnings: '', newBusinessId: '00016.AA', newBusinessName: 'DLA IT Support Services - Labor', complete: on(), approved: off(), subtaskHide: off(true), escalation: '0.00%' },
-  { type: 'BUD', version: '1', finalVersion: null, status: 'Working', sourceType: '', sourceVersion: '', closedPeriod: '11/30/2020', health: '', warnings: '33', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
+  { projectId: '10105.10.001', projectName: 'Local Computing Environ', type: 'BUD', version: '1', finalVersion: on(), status: 'Approved', sourceType: '', sourceVersion: '', closedPeriod: '05/31/2016', health: '', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(true), approved: on(), subtaskHide: off(true), escalation: '3.00%' },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'BUD', version: '1', finalVersion: on(), status: 'Approved', sourceType: '', sourceVersion: '', closedPeriod: '07/31/2020', health: '', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(true), approved: on(), subtaskHide: off(true), escalation: '3.00%' },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'BUD', version: '2', finalVersion: off(), status: 'Approved', sourceType: 'BUD', sourceVersion: '1', closedPeriod: '05/31/2020', health: '', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(true), approved: on(), subtaskHide: off(true), escalation: '3.00%' },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'BUD', version: '3', finalVersion: off(), status: 'Complete', sourceType: 'BUD', sourceVersion: '2', closedPeriod: '11/30/2020', health: '', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(), approved: off(), subtaskHide: off(true), escalation: '3.00%' },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'BUD', version: '3', finalVersion: null, status: 'Working', sourceType: 'BUD', sourceVersion: '2', closedPeriod: '11/30/2020', health: '', warnings: '222', newBusinessId: '', newBusinessName: '', complete: on(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'EAC', version: '1', finalVersion: off(true), status: 'Incomplete', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '04/30/2020', health: 'At Risk', warnings: '', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(true), escalation: '3.00%', selected: true },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'EAC', version: '1', finalVersion: null, status: 'Working', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '04/30/2020', health: 'At Risk', warnings: '2', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'EAC', version: '1', finalVersion: on(), status: 'Complete', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '05/31/2020', health: 'At Risk', warnings: '', newBusinessId: '', newBusinessName: '', complete: on(), approved: off(), subtaskHide: off(true), escalation: '3.00%' },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'EAC', version: '2', finalVersion: null, status: 'Working', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '05/31/2020', health: 'At Risk', warnings: '2', newBusinessId: '', newBusinessName: '', complete: on(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'EAC', version: '3', finalVersion: null, status: 'Working', sourceType: 'EAC', sourceVersion: '1', closedPeriod: '11/30/2020', health: 'At Risk', warnings: '2', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
+  { projectId: '10105.10.010', projectName: 'SE2020 SIR2 FO - TO1', type: 'EAC', version: '4', finalVersion: null, status: 'Working', sourceType: 'EAC', sourceVersion: '2', closedPeriod: '05/31/2020', health: 'At Risk', warnings: '0', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
+  { projectId: '10105.10.011', projectName: 'Local Computing Environ', type: 'BUD', version: '1', finalVersion: null, status: 'Working', sourceType: 'NB - 18-0108', sourceVersion: '1', closedPeriod: '11/30/2020', health: '', warnings: '0', newBusinessId: '18-0108', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
+  { projectId: '10105.10.011', projectName: 'Local Computing Environ', type: 'BUD', version: '1', finalVersion: on(true), status: 'Complete', sourceType: 'EXCEL', sourceVersion: '0', closedPeriod: '11/30/2020', health: '', warnings: '', newBusinessId: '00016.AA', newBusinessName: 'DLA IT Support Services - Labor', complete: on(), approved: off(), subtaskHide: off(true), escalation: '0.00%' },
+  { projectId: '10105.10.100', projectName: 'Armstrong Labs T&M Demo', type: 'BUD', version: '1', finalVersion: null, status: 'Working', sourceType: '', sourceVersion: '', closedPeriod: '11/30/2020', health: '', warnings: '33', newBusinessId: '', newBusinessName: '', complete: off(), approved: off(), subtaskHide: off(), escalation: '3.00%' },
 ]
 
 const EMPTY_TRAILING_ROWS = 2
 
+const PROJECT = { id: '10105', name: 'Cybersecurity Diag & Mit' } as const
+
 const LEFT_COLUMNS = [
+  { key: 'hideRow', label: 'Hide Row', width: 'xs' },
+  { key: 'actions', label: 'Actions', width: 'md' },
+  { key: 'projectId', label: 'Project ID', width: 'lg' },
+  { key: 'projectName', label: 'Project Name', width: 'xl' },
   { key: 'type', label: 'Type', width: 'xs' },
   { key: 'version', label: 'Version', width: 'sm' },
   { key: 'versionCode', label: 'Version Code', width: 'md' },
@@ -106,7 +114,7 @@ function GridCheckbox({ value, label }: { value: Check; label: string }) {
   )
 }
 
-function WindowControls({ expand = false }: { expand?: boolean }) {
+function WindowControls({ expand = false, onClose }: { expand?: boolean; onClose?: () => void }) {
   return (
     <div className="pb-window-controls">
       {expand && (
@@ -120,7 +128,7 @@ function WindowControls({ expand = false }: { expand?: boolean }) {
       <button type="button" aria-label="Maximize">
         <span className="pb-window-controls__square" aria-hidden="true" />
       </button>
-      <button type="button" aria-label="Close">
+      <button type="button" aria-label="Close" onClick={onClose}>
         <Icon name="x-mark" size="sm" />
       </button>
     </div>
@@ -137,6 +145,17 @@ function LeftPaneRow({ row }: { row: BudgetRow }) {
   return (
     <tr className={clsx(locked && 'pb-row--locked', row.selected && 'pb-row--selected')}>
       <td className="pb-selector" />
+      <td className="pb-cell--center">
+        <GridCheckbox value={off(locked)} label="Hide Row" />
+      </td>
+      <td>
+        <span className="pb-select-cell">
+          -None-
+          <Icon name="chevron-down" size="xs" />
+        </span>
+      </td>
+      <td>{row.projectId}</td>
+      <td>{row.projectName}</td>
       <td>{row.type}</td>
       <td>{row.version}</td>
       <td className={clsx(row.selected && 'pb-cell--active')}>N/A</td>
@@ -148,6 +167,22 @@ function LeftPaneRow({ row }: { row: BudgetRow }) {
       <td>{row.sourceVersion}</td>
       <td>{row.closedPeriod}</td>
       <td className={clsx(health && ['pb-cell--status', statusClass(health)])}>{health}</td>
+    </tr>
+  )
+}
+
+/** Top-level project row; sits where the filter row does so both panes keep the same row count. */
+function ProjectRow({ columns }: { columns: number }) {
+  return (
+    <tr className="pb-row--filter">
+      <td className="pb-selector" />
+      <td className="pb-cell--center">
+        <GridCheckbox value={off(true)} label="Hide Row" />
+      </td>
+      <td />
+      <td className="pb-cell--shaded">{PROJECT.id}</td>
+      <td className="pb-cell--shaded">{PROJECT.name}</td>
+      {Array.from({ length: columns - 5 }, (_, j) => <td key={j} />)}
     </tr>
   )
 }
@@ -366,7 +401,7 @@ export function ProjectBudgetsEacContent({ delaOpen = false }: ProjectBudgetsEac
                 </tr>
               </thead>
               <tbody>
-                <FilterRow columns={LEFT_COLUMNS.length + 1} />
+                <ProjectRow columns={LEFT_COLUMNS.length + 1} />
                 {BUDGET_ROWS.map((row, i) => <LeftPaneRow key={i} row={row} />)}
                 <EmptyRows count={EMPTY_TRAILING_ROWS} columns={LEFT_COLUMNS.length + 1} />
               </tbody>
@@ -433,7 +468,7 @@ export function ProjectBudgetsEacContent({ delaOpen = false }: ProjectBudgetsEac
             <span aria-hidden="true"> &gt; </span>
             {detailTab}
           </h2>
-          <WindowControls expand />
+          <WindowControls expand onClose={() => setHealthTableHidden(true)} />
         </div>
         <div className="pb-indicator">
           <div className="pb-health-summary" role="status">
